@@ -22,7 +22,7 @@ import { productImages } from "@/utils/productImages";
 import { useFetchProducts } from "@/hooks/useFetchProducts";
 
 type Props = {
-  categorySlug: string;
+  categorySlug?: string;
   keyword?: string;
 };
 
