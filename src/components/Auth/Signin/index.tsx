@@ -1,6 +1,21 @@
+"use client";
+import InputField from "@/components/shared/InputField";
 import Link from "next/link";
+import { SignupFormData } from "../Signup";
+import { useForm } from "react-hook-form";
 
 const Signin = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setError,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    mode: "onTouched",
+  });
+
   return (
     <>
       <section className="overflow-hidden py-20 bg-gray-2">
@@ -15,34 +30,26 @@ const Signin = () => {
 
             <div>
               <form>
-                <div className="mb-5">
-                  <label htmlFor="email" className="block mb-2.5">
-                    Email
-                  </label>
+                <InputField<SignupFormData>
+                  label="Email Address"
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  required
+                  register={register}
+                  errors={errors}
+                />
 
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    placeholder="Enter your email"
-                    className="rounded-lg border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-3 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                  />
-                </div>
-
-                <div className="mb-5">
-                  <label htmlFor="password" className="block mb-2.5">
-                    Password
-                  </label>
-
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="Enter your password"
-                    autoComplete="on"
-                    className="rounded-lg border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-3 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                  />
-                </div>
+                <InputField<SignupFormData>
+                  label="Password"
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  minLength={6}
+                  register={register}
+                  errors={errors}
+                />
 
                 <button
                   type="submit"
@@ -66,10 +73,6 @@ const Signin = () => {
                 <div className="flex flex-col gap-4.5 mt-4.5">
                   <button className="flex justify-center items-center gap-3.5 rounded-lg border border-gray-3 bg-gray-1 p-3 ease-out duration-200 hover:bg-gray-2">
                     Sign In with Google
-                  </button>
-
-                  <button className="flex justify-center items-center gap-3.5 rounded-lg border border-gray-3 bg-gray-1 p-3 ease-out duration-200 hover:bg-gray-2">
-                    Sign Up with Github
                   </button>
                 </div>
 
