@@ -1,4 +1,5 @@
 import Home from "@/components/Home";
+import getServerCredentials from "@/session/session";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
   // other metadata
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await getServerCredentials();
+  console.log({ session });
   return (
     <>
       <Home />

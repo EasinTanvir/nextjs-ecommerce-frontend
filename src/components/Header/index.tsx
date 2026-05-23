@@ -10,6 +10,9 @@ import { useFetchAllCategories } from "@/hooks/useCategory";
 import { FaCartPlus, FaPhone, FaSearch, FaUser } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { generateSlug } from "@/utils/generateSlug";
+import { signOut, useSession } from "next-auth/react";
+import api from "@/api";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,6 +20,10 @@ const Header = () => {
   const [stickyMenu, setStickyMenu] = useState(false);
   const { openCartModal } = useCartModalContext();
   const router = useRouter();
+  const { status, data } = useSession();
+  console.log({ status });
+  console.log({ data });
+  console.log(data?.user);
 
   const { data: categories = [] } = useFetchAllCategories(true);
 
@@ -59,6 +66,16 @@ const Header = () => {
     if (!searchQuery.trim()) return;
 
     router.push(`/search/${generateSlug(searchQuery)}`);
+  };
+
+  const logOutHandler = async () => {
+    const data = await signOut({
+      redirect: false,
+      callbackUrl: `/signin`,
+    });
+
+    router.push(data.url);
+    router.refresh();
   };
   return (
     <header
@@ -136,18 +153,66 @@ const Header = () => {
 
             <div className="flex w-full lg:w-auto justify-between items-center gap-5">
               <div className="flex items-center gap-5">
-                <Link href="/signin" className="flex items-center gap-2.5">
-                  <FaUser />
+                {status === "authenticated" ? (
+                  <div className="relative group">
+                    <button className="flex items-center gap-3">
+                      {/* Avatar */}
+                      <div className="w-10 h-10 rounded-full bg-dark text-white flex items-center justify-center font-semibold uppercase">
+                        {data?.user?.name?.charAt(0)}
+                      </div>
 
-                  <div>
-                    <span className="block text-2xs text-dark-4 uppercase">
-                      account
-                    </span>
-                    <p className="font-medium text-custom-sm text-dark">
-                      Sign In
-                    </p>
+                      {/* User Info */}
+                      <div className="text-left hidden sm:block">
+                        <span className="block text-2xs text-dark-4 uppercase">
+                          Welcome
+                        </span>
+
+                        <p className="font-medium text-custom-sm text-dark line-clamp-1">
+                          {data?.user?.name}
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Dropdown */}
+                    <div className="absolute right-0 top-full mt-3 w-[220px] rounded-xl border border-gray-2 bg-white shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      <div className="p-4 border-b border-gray-2">
+                        <p className="font-medium text-dark">
+                          {data?.user?.name}
+                        </p>
+
+                        <p className="text-sm text-dark-4 break-all">
+                          {data?.user?.email}
+                        </p>
+                      </div>
+
+                      <div className="p-2">
+                        <Link
+                          href="/profile"
+                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-dark hover:bg-gray-1 duration-200"
+                        >
+                          <FaUser />
+                          Profile
+                        </Link>
+
+                        <button onClick={logOutHandler}>Logout</button>
+                      </div>
+                    </div>
                   </div>
-                </Link>
+                ) : (
+                  <Link href="/signin" className="flex items-center gap-2.5">
+                    <FaUser />
+
+                    <div>
+                      <span className="block text-2xs text-dark-4 uppercase">
+                        account
+                      </span>
+
+                      <p className="font-medium text-custom-sm text-dark">
+                        Sign In
+                      </p>
+                    </div>
+                  </Link>
+                )}
 
                 <button
                   onClick={handleOpenCartModal}

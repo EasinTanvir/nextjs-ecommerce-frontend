@@ -17,7 +17,7 @@ import ScrollToTop from "@/components/Common/ScrollToTop";
 import PreLoader from "@/components/Common/PreLoader";
 import TenStackQueryWrapper from "@/providers/TenStackQueryWrapper";
 import { Toaster } from "react-hot-toast";
-
+import { SessionProvider } from "next-auth/react";
 export default function RootLayout({
   children,
 }: {
@@ -35,25 +35,27 @@ export default function RootLayout({
         {loading ? (
           <PreLoader />
         ) : (
-          <TenStackQueryWrapper>
-            <ReduxProvider>
-              <CartModalProvider>
-                <ModalProvider>
-                  <PreviewSliderProvider>
-                    <Header />
-                    {children}
+          <SessionProvider>
+            <TenStackQueryWrapper>
+              <ReduxProvider>
+                <CartModalProvider>
+                  <ModalProvider>
+                    <PreviewSliderProvider>
+                      <Header />
+                      {children}
 
-                    <QuickViewModal />
-                    <CartSidebarModal />
-                    <PreviewSliderModal />
-                  </PreviewSliderProvider>
-                </ModalProvider>
-              </CartModalProvider>
-            </ReduxProvider>
-            <ScrollToTop />
-            <Toaster position="top-center" />
-            <Footer />
-          </TenStackQueryWrapper>
+                      <QuickViewModal />
+                      <CartSidebarModal />
+                      <PreviewSliderModal />
+                    </PreviewSliderProvider>
+                  </ModalProvider>
+                </CartModalProvider>
+              </ReduxProvider>
+              <ScrollToTop />
+              <Toaster position="top-center" />
+              <Footer />
+            </TenStackQueryWrapper>
+          </SessionProvider>
         )}
       </body>
     </html>

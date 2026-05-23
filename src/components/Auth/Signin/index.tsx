@@ -12,8 +12,7 @@ import toast from "react-hot-toast";
 
 import { FcGoogle } from "react-icons/fc";
 
-import api from "@/api";
-
+import { signIn } from "next-auth/react";
 import InputField from "@/components/shared/InputField";
 
 interface SigninFormData {
@@ -44,48 +43,20 @@ const Signin = () => {
   const loginHandler = async (data: SigninFormData) => {
     setLoader(true);
 
-    try {
-      const response = await api.post("/login", {
-        email: data.email,
-        password: data.password,
-      });
+    const res = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
 
-      // Save token
-      localStorage.setItem("token", response.data.token);
-
-      toast.success("Login successful!");
-
-      // Redirect
+    //@ts-ignore
+    if (!res?.code && !res?.error) {
       router.push("/");
-    } catch (err: any) {
-      // Validation Errors
-      if (err?.response?.status === 422) {
-        const validationErrors = err.response.data.errors;
-
-        Object.keys(validationErrors).forEach((field) => {
-          setError(field as keyof SigninFormData, {
-            type: "server",
-
-            message: validationErrors[field][0],
-          });
-        });
-
-        toast.error("Please fix the form errors.");
-
-        return;
-      }
-
-      // Invalid Credentials
-      if (err?.response?.status === 401) {
-        toast.error("Invalid email or password");
-
-        return;
-      }
-
-      toast.error(err?.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoader(false);
+      toast.success("Login Success");
+      return;
     }
+    setLoader(false);
+    toast.error("Invalid Credential");
   };
 
   return (
