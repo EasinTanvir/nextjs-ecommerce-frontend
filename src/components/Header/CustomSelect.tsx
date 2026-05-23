@@ -1,8 +1,10 @@
+import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
 export interface SelectOption {
   label: string;
   value: string;
+  slug: string;
 }
 
 interface CustomSelectProps {
@@ -21,14 +23,6 @@ const CustomSelect = ({ options, onChange }: CustomSelectProps) => {
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
-  };
-
-  const handleOptionClick = (option: SelectOption) => {
-    setSelectedOption(option);
-
-    onChange?.(option);
-
-    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -65,14 +59,14 @@ const CustomSelect = ({ options, onChange }: CustomSelectProps) => {
 
       <div className={`select-items ${isOpen ? "" : "select-hide"}`}>
         {options.map((option) => (
-          <div
-            key={option.value}
-            onClick={() => handleOptionClick(option)}
-            className={`select-item ${
-              selectedOption.value === option.value ? "same-as-selected" : ""
-            }`}
-          >
-            {option.label}
+          <div>
+            <Link
+              href={`/category/${option.slug}`}
+              key={option.value}
+              className={`select-item `}
+            >
+              {option.label}
+            </Link>
           </div>
         ))}
       </div>

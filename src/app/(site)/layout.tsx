@@ -15,6 +15,7 @@ import PreviewSliderModal from "@/components/Common/PreviewSlider";
 
 import ScrollToTop from "@/components/Common/ScrollToTop";
 import PreLoader from "@/components/Common/PreLoader";
+import TenStackQueryWrapper from "@/providers/TenStackQueryWrapper";
 
 export default function RootLayout({
   children,
@@ -33,7 +34,7 @@ export default function RootLayout({
         {loading ? (
           <PreLoader />
         ) : (
-          <>
+          <TenStackQueryWrapper>
             <ReduxProvider>
               <CartModalProvider>
                 <ModalProvider>
@@ -50,7 +51,7 @@ export default function RootLayout({
             </ReduxProvider>
             <ScrollToTop />
             <Footer />
-          </>
+          </TenStackQueryWrapper>
         )}
       </body>
     </html>

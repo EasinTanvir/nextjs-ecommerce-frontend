@@ -43,11 +43,13 @@ const Header = () => {
     {
       label: "All Categories",
       value: "0",
+      slug: "/",
     },
 
     ...categories.map((category) => ({
       label: category.name,
       value: String(category.id),
+      slug: category.slug,
     })),
   ];
   return (
@@ -77,7 +79,6 @@ const Header = () => {
             <div className="max-w-[475px] w-full">
               <form>
                 <div className="flex items-center">
-                  // options are categories
                   <CustomSelect options={options} />
                   <div className="relative max-w-[333px] sm:min-w-[333px] w-full">
                     {/* <!-- divider --> */}
