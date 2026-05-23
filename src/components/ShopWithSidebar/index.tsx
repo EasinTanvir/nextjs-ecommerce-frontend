@@ -21,6 +21,7 @@ import { useFetchAllCategories } from "@/hooks/useCategory";
 import { useFetchCategoryProducts } from "@/hooks/useFetchCategoryProducts";
 
 import { productImages } from "@/utils/productImages";
+import { useFetchProducts } from "@/hooks/useFetchProducts";
 
 const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
   const [productStyle, setProductStyle] = useState("grid");
@@ -98,8 +99,8 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
   const { data: categoriesData = [] } = useFetchAllCategories(true);
 
   // fetch products
-  const { data, isLoading } = useFetchCategoryProducts({
-    slug: selectedCategories.join(","),
+  const { data, isLoading } = useFetchProducts({
+    categories: selectedCategories,
     page,
     perPage: 8,
     minPrice,
