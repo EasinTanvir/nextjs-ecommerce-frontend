@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+
 import "../css/euclid-circular-a-font.css";
 import "../css/style.css";
 import Header from "../../components/Header";
@@ -14,7 +14,7 @@ import { PreviewSliderProvider } from "../context/PreviewSliderContext";
 import PreviewSliderModal from "@/components/Common/PreviewSlider";
 
 import ScrollToTop from "@/components/Common/ScrollToTop";
-import PreLoader from "@/components/Common/PreLoader";
+
 import TenStackQueryWrapper from "@/providers/TenStackQueryWrapper";
 import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react";
@@ -23,40 +23,30 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
-
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body>
-        {loading ? (
-          <PreLoader />
-        ) : (
-          <SessionProvider>
-            <TenStackQueryWrapper>
-              <ReduxProvider>
-                <CartModalProvider>
-                  <ModalProvider>
-                    <PreviewSliderProvider>
-                      <Header />
-                      {children}
+        <SessionProvider>
+          <TenStackQueryWrapper>
+            <ReduxProvider>
+              <CartModalProvider>
+                <ModalProvider>
+                  <PreviewSliderProvider>
+                    <Header />
+                    {children}
 
-                      <QuickViewModal />
-                      <CartSidebarModal />
-                      <PreviewSliderModal />
-                    </PreviewSliderProvider>
-                  </ModalProvider>
-                </CartModalProvider>
-              </ReduxProvider>
-              <ScrollToTop />
-              <Toaster position="top-center" />
-              <Footer />
-            </TenStackQueryWrapper>
-          </SessionProvider>
-        )}
+                    <QuickViewModal />
+                    <CartSidebarModal />
+                    <PreviewSliderModal />
+                  </PreviewSliderProvider>
+                </ModalProvider>
+              </CartModalProvider>
+            </ReduxProvider>
+            <ScrollToTop />
+            <Toaster position="top-center" />
+            <Footer />
+          </TenStackQueryWrapper>
+        </SessionProvider>
       </body>
     </html>
   );
