@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import Breadcrumb from "../Common/Breadcrumb";
 import CustomSelect from "./CustomSelect";
 import CategoryDropdown from "./CategoryDropdown";
 import ColorsDropdwon from "./ColorsDropdwon";
@@ -18,7 +17,6 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { CiGrid2H } from "react-icons/ci";
 
 import { useFetchAllCategories } from "@/hooks/useCategory";
-import { useFetchCategoryProducts } from "@/hooks/useFetchCategoryProducts";
 
 import { productImages } from "@/utils/productImages";
 import { useFetchProducts } from "@/hooks/useFetchProducts";
