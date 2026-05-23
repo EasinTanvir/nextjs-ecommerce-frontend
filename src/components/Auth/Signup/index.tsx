@@ -124,12 +124,22 @@ const Signup = () => {
               />
 
               <InputField<SignupFormData>
+                label="Email Address"
+                id="email"
+                type="email"
+                placeholder="Enter your email address"
+                required
+                register={register}
+                errors={errors}
+              />
+
+              <InputField<SignupFormData>
                 label="Password"
                 id="password"
                 type="password"
                 placeholder="Enter your password"
                 required
-                minLength={6}
+                minLength={8}
                 register={register}
                 errors={errors}
               />
