@@ -17,7 +17,7 @@ const NewArrival = () => {
   console.log({ data });
   // attach frontend demo images
   const products =
-    data?.data?.map((product: any, index: number) => ({
+    data?.products?.map((product: any, index: number) => ({
       ...product,
 
       title: product.name,
