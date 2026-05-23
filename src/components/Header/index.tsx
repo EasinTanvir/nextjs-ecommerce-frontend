@@ -93,12 +93,7 @@ const Header = () => {
           {/* <!-- header top left --> */}
           <div className="xl:w-auto flex-col sm:flex-row w-full flex sm:justify-between sm:items-center gap-5 sm:gap-10">
             <Link className="flex-shrink-0" href="/">
-              <Image
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={219}
-                height={36}
-              />
+              <h3 className="text-gray-7 text-3xl font-bold">ProShop</h3>
             </Link>
 
             <div className="max-w-[475px] w-full">
@@ -114,7 +109,7 @@ const Header = () => {
                       type="search"
                       name="search"
                       id="search"
-                      placeholder="I am shopping for..."
+                      placeholder="Search here..."
                       autoComplete="off"
                       className="custom-search w-full rounded-r-[5px] bg-gray-1 !border-l-0 border border-gray-3 py-2.5 pl-4 pr-10 outline-none ease-in duration-200"
                     />
@@ -135,19 +130,6 @@ const Header = () => {
 
           {/* <!-- header top right --> */}
           <div className="flex w-full lg:w-auto items-center gap-7.5">
-            <div className="hidden xl:flex items-center gap-3.5">
-              <FaPhone />
-
-              <div>
-                <span className="block text-2xs text-dark-4 uppercase">
-                  24/7 SUPPORT
-                </span>
-                <p className="font-medium text-custom-sm text-dark">
-                  (+965) 7492-3477
-                </p>
-              </div>
-            </div>
-
             {/* <!-- divider --> */}
             <span className="hidden xl:block w-px h-7.5 bg-gray-4"></span>
 
@@ -186,14 +168,6 @@ const Header = () => {
                       </div>
 
                       <div className="p-2">
-                        <Link
-                          href="/profile"
-                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-dark hover:bg-gray-1 duration-200"
-                        >
-                          <FaUser />
-                          Profile
-                        </Link>
-
                         <button onClick={logOutHandler}>Logout</button>
                       </div>
                     </div>
