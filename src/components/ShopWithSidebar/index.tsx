@@ -21,7 +21,12 @@ import { useFetchAllCategories } from "@/hooks/useCategory";
 import { productImages } from "@/utils/productImages";
 import { useFetchProducts } from "@/hooks/useFetchProducts";
 
-const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
+type Props = {
+  categorySlug: string;
+  keyword?: string;
+};
+
+const ShopWithSidebar = ({ categorySlug, keyword }: Props) => {
   const [productStyle, setProductStyle] = useState("grid");
 
   const [productSidebar, setProductSidebar] = useState(false);
@@ -99,6 +104,7 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
   // fetch products
   const { data, isLoading } = useFetchProducts({
     categories: selectedCategories,
+    keyword,
     page,
     perPage: 8,
     minPrice,
