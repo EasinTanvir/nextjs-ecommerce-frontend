@@ -5,7 +5,7 @@ const ShopWithSidebarPage = async ({ params }) => {
 
   return (
     <main>
-      <ShopWithSidebar />
+      <ShopWithSidebar categorySlug={slug} />
     </main>
   );
 };

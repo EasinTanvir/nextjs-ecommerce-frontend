@@ -1,14 +1,38 @@
-import { useState } from 'react';
-import RangeSlider from 'react-range-slider-input';
-import 'react-range-slider-input/dist/style.css';
+import { useState } from "react";
 
-const PriceDropdown = () => {
+import RangeSlider from "react-range-slider-input";
+
+import "react-range-slider-input/dist/style.css";
+
+interface PriceDropdownProps {
+  setMinPrice: React.Dispatch<React.SetStateAction<number | undefined>>;
+
+  setMaxPrice: React.Dispatch<React.SetStateAction<number | undefined>>;
+}
+
+const PriceDropdown = ({ setMinPrice, setMaxPrice }: PriceDropdownProps) => {
   const [toggleDropdown, setToggleDropdown] = useState(true);
 
   const [selectedPrice, setSelectedPrice] = useState({
     from: 0,
-    to: 100,
+    to: 5000,
   });
+
+  const handlePriceChange = (values: number[]) => {
+    const min = Math.floor(values[0]);
+
+    const max = Math.ceil(values[1]);
+
+    setSelectedPrice({
+      from: min,
+      to: max,
+    });
+
+    // update parent state
+    setMinPrice(min);
+
+    setMaxPrice(max);
+  };
 
   return (
     <div className="bg-white shadow-1 rounded-lg">
@@ -17,12 +41,12 @@ const PriceDropdown = () => {
         className="cursor-pointer flex items-center justify-between py-3 pl-6 pr-5.5"
       >
         <p className="text-dark">Price</p>
+
         <button
-          onClick={() => setToggleDropdown(!toggleDropdown)}
-          id="price-dropdown-btn"
+          type="button"
           aria-label="button for price dropdown"
           className={`text-dark ease-out duration-200 ${
-            toggleDropdown && 'rotate-180'
+            toggleDropdown ? "rotate-180" : ""
           }`}
         >
           <svg
@@ -37,46 +61,41 @@ const PriceDropdown = () => {
               fillRule="evenodd"
               clipRule="evenodd"
               d="M4.43057 8.51192C4.70014 8.19743 5.17361 8.161 5.48811 8.43057L12 14.0122L18.5119 8.43057C18.8264 8.16101 19.2999 8.19743 19.5695 8.51192C19.839 8.82642 19.8026 9.29989 19.4881 9.56946L12.4881 15.5695C12.2072 15.8102 11.7928 15.8102 11.5119 15.5695L4.51192 9.56946C4.19743 9.29989 4.161 8.82641 4.43057 8.51192Z"
-              fill=""
             />
           </svg>
         </button>
       </div>
 
-      {/* // <!-- dropdown menu --> */}
-      <div className={`p-6 ${toggleDropdown ? 'block' : 'hidden'}`}>
-        <div id="pricingOne">
-          <div className="price-range">
-            <RangeSlider
-              id="range-slider-gradient"
-              className="margin-lg"
-              step={'any'}
-              onInput={(e) =>
-                setSelectedPrice({
-                  from: Math.floor(e[0]),
-                  to: Math.ceil(e[1]),
-                })
-              }
-            />
+      {/* Dropdown */}
+      <div className={`p-6 ${toggleDropdown ? "block" : "hidden"}`}>
+        <div className="price-range">
+          <RangeSlider
+            id="range-slider-gradient"
+            className="margin-lg"
+            min={0}
+            max={5000}
+            step={50}
+            defaultValue={[0, 5000]}
+            onInput={handlePriceChange}
+          />
 
-            <div className="price-amount flex items-center justify-between pt-4">
-              <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
-                <span className="block border-r border-gray-3/80 px-2.5 py-1.5">
-                  $
-                </span>
-                <span id="minAmount" className="block px-3 py-1.5">
-                  {selectedPrice.from}
-                </span>
-              </div>
+          <div className="price-amount flex items-center justify-between pt-4">
+            {/* Min */}
+            <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
+              <span className="block border-r border-gray-3/80 px-2.5 py-1.5">
+                $
+              </span>
 
-              <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
-                <span className="block border-r border-gray-3/80 px-2.5 py-1.5">
-                  $
-                </span>
-                <span id="maxAmount" className="block px-3 py-1.5">
-                  {selectedPrice.to}
-                </span>
-              </div>
+              <span className="block px-3 py-1.5">{selectedPrice.from}</span>
+            </div>
+
+            {/* Max */}
+            <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
+              <span className="block border-r border-gray-3/80 px-2.5 py-1.5">
+                $
+              </span>
+
+              <span className="block px-3 py-1.5">{selectedPrice.to}</span>
             </div>
           </div>
         </div>
