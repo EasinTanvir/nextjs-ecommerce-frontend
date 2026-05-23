@@ -281,12 +281,20 @@ const ShopWithSidebar = ({ categorySlug, keyword }: Props) => {
                         : "flex flex-col gap-7.5"
                     }`}
                   >
-                    {products.map((item: any, key: number) =>
-                      productStyle === "grid" ? (
-                        <SingleGridItem item={item} key={key} />
-                      ) : (
-                        <SingleListItem item={item} key={key} />
-                      ),
+                    {products.length > 0 ? (
+                      products.map((item: any, key: number) =>
+                        productStyle === "grid" ? (
+                          <SingleGridItem item={item} key={key} />
+                        ) : (
+                          <SingleListItem item={item} key={key} />
+                        ),
+                      )
+                    ) : (
+                      <div className="col-span-full flex justify-center py-20  h-[500px]">
+                        <div className="inline-flex items-center rounded-full bg-red-100 px-6 py-3 text-red-600 font-medium">
+                          No Products Found
+                        </div>
+                      </div>
                     )}
                   </div>
 
