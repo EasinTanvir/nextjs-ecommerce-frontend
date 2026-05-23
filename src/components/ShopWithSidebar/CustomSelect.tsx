@@ -1,34 +1,56 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 
-const CustomSelect = ({ options }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(options[0]);
-  const selectRef = useRef(null);
+export interface SelectOption {
+  label: string;
+  value: string;
+  slug?: string;
+}
 
-  // Function to close the dropdown when a click occurs outside the component
-  const handleClickOutside = (event) => {
-    if (selectRef.current && !selectRef.current.contains(event.target)) {
+interface CustomSelectProps {
+  options: SelectOption[];
+
+  onChange?: (option: SelectOption) => void;
+
+  value?: string;
+}
+
+const CustomSelect = ({ options, onChange, value }: CustomSelectProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const selectRef = useRef<HTMLDivElement | null>(null);
+
+  // selected option from query param
+  const selectedOption =
+    options.find((option) => option.value === value) || options[0];
+
+  // close dropdown outside click
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      selectRef.current &&
+      !selectRef.current.contains(event.target as Node)
+    ) {
       setIsOpen(false);
     }
   };
 
   useEffect(() => {
-    // Add a click event listener to the document
     document.addEventListener("click", handleClickOutside);
 
-    // Clean up the event listener when the component unmounts
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
-  const handleOptionClick = (option) => {
-    setSelectedOption(option);
-    toggleDropdown();
+  const handleOptionClick = (option: SelectOption) => {
+    onChange?.(option);
+
+    setIsOpen(false);
   };
 
   return (
@@ -36,6 +58,7 @@ const CustomSelect = ({ options }) => {
       className="custom-select custom-select-2 flex-shrink-0 relative"
       ref={selectRef}
     >
+      {/* Selected */}
       <div
         className={`select-selected whitespace-nowrap ${
           isOpen ? "select-arrow-active" : ""
@@ -44,13 +67,15 @@ const CustomSelect = ({ options }) => {
       >
         {selectedOption.label}
       </div>
+
+      {/* Dropdown */}
       <div className={`select-items ${isOpen ? "" : "select-hide"}`}>
-        {options.slice(1).map((option, index) => (
+        {options.map((option) => (
           <div
-            key={index}
+            key={option.value}
             onClick={() => handleOptionClick(option)}
             className={`select-item ${
-              selectedOption === option ? "same-as-selected" : ""
+              selectedOption.value === option.value ? "same-as-selected" : ""
             }`}
           >
             {option.label}

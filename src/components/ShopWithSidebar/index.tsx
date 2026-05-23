@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 
+import { useRouter, useSearchParams } from "next/navigation";
+
 import Breadcrumb from "../Common/Breadcrumb";
 import CustomSelect from "./CustomSelect";
 import CategoryDropdown from "./CategoryDropdown";
@@ -17,6 +19,7 @@ import { CiGrid2H } from "react-icons/ci";
 
 import { useFetchAllCategories } from "@/hooks/useCategory";
 import { useFetchCategoryProducts } from "@/hooks/useFetchCategoryProducts";
+
 import { productImages } from "@/utils/productImages";
 
 const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
@@ -26,13 +29,42 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
 
   const [stickyMenu, setStickyMenu] = useState(false);
 
-  const [page, setPage] = useState(1);
+  const router = useRouter();
 
-  const [minPrice, setMinPrice] = useState<number>();
+  const searchParams = useSearchParams();
 
-  const [maxPrice, setMaxPrice] = useState<number>();
+  // query params
+  const page = Number(searchParams.get("page") || 1);
 
-  const [sort, setSort] = useState("latest");
+  const sort = searchParams.get("sort") || "latest";
+
+  const minPrice = searchParams.get("min_price")
+    ? Number(searchParams.get("min_price"))
+    : undefined;
+
+  const maxPrice = searchParams.get("max_price")
+    ? Number(searchParams.get("max_price"))
+    : undefined;
+
+  // selected categories
+  const selectedCategories = searchParams
+    .get("categories")
+    ?.split(",")
+    .filter(Boolean) || [categorySlug];
+
+  // helper for query params
+  const updateQueryParams = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set(key, value);
+
+    // reset page if filters change
+    if (key !== "page") {
+      params.set("page", "1");
+    }
+
+    router.push(`?${params.toString()}`);
+  };
 
   const handleStickyMenu = () => {
     if (window.scrollY >= 80) {
@@ -65,9 +97,9 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
   // fetch categories
   const { data: categoriesData = [] } = useFetchAllCategories(true);
 
-  // fetch category products
+  // fetch products
   const { data, isLoading } = useFetchCategoryProducts({
-    slug: categorySlug,
+    slug: selectedCategories.join(","),
     page,
     perPage: 8,
     minPrice,
@@ -90,16 +122,19 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
     },
   ];
 
-  // categories dropdown
+  // categories
   const categories =
     categoriesData.map((category: any) => ({
       name: category.name,
+
       products: 0,
-      isRefined: category.slug === categorySlug,
+
+      isRefined: selectedCategories.includes(category.slug),
+
       slug: category.slug,
     })) || [];
 
-  // attach frontend images to backend products
+  // attach frontend images
   const products =
     data?.products?.map((product: any, index: number) => ({
       ...product,
@@ -115,11 +150,6 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
 
   return (
     <>
-      <Breadcrumb
-        title={data?.category?.name || "Explore Products"}
-        pages={["category", "/", categorySlug]}
-      />
-
       <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
           <div className="flex gap-7.5">
@@ -152,13 +182,7 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
 
                       <button
                         onClick={() => {
-                          setMinPrice(undefined);
-
-                          setMaxPrice(undefined);
-
-                          setSort("latest");
-
-                          setPage(1);
+                          router.push(`/category/${categorySlug}`);
                         }}
                         className="text-blue"
                       >
@@ -175,8 +199,12 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
 
                   {/* Price */}
                   <PriceDropdown
-                    setMinPrice={setMinPrice}
-                    setMaxPrice={setMaxPrice}
+                    setMinPrice={(value) =>
+                      updateQueryParams("min_price", String(value))
+                    }
+                    setMaxPrice={(value) =>
+                      updateQueryParams("max_price", String(value))
+                    }
                   />
                 </div>
               </form>
@@ -192,9 +220,7 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
                     <CustomSelect
                       options={options}
                       onChange={(option) => {
-                        setSort(option.value);
-
-                        setPage(1);
+                        updateQueryParams("sort", option.value);
                       }}
                     />
 
@@ -267,7 +293,10 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
                         <li>
                           <button
                             onClick={() =>
-                              setPage((prev) => Math.max(prev - 1, 1))
+                              updateQueryParams(
+                                "page",
+                                String(Math.max(page - 1, 1)),
+                              )
                             }
                             disabled={page === 1}
                             className="flex items-center justify-center w-8 h-9 rounded-[3px] disabled:text-gray-4 hover:text-white hover:bg-blue"
@@ -282,7 +311,9 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
                         }).map((_, index) => (
                           <li key={index}>
                             <button
-                              onClick={() => setPage(index + 1)}
+                              onClick={() =>
+                                updateQueryParams("page", String(index + 1))
+                              }
                               className={`flex py-1.5 px-3.5 duration-200 rounded-[3px] ${
                                 page === index + 1
                                   ? "bg-blue text-white"
@@ -298,8 +329,14 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
                         <li>
                           <button
                             onClick={() =>
-                              setPage((prev) =>
-                                Math.min(prev + 1, data?.pagination?.last_page),
+                              updateQueryParams(
+                                "page",
+                                String(
+                                  Math.min(
+                                    page + 1,
+                                    data?.pagination?.last_page,
+                                  ),
+                                ),
                               )
                             }
                             disabled={page === data?.pagination?.last_page}
@@ -320,4 +357,5 @@ const ShopWithSidebar = ({ categorySlug }: { categorySlug: string }) => {
     </>
   );
 };
+
 export default ShopWithSidebar;
