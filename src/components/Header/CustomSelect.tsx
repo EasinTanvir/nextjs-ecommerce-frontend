@@ -59,11 +59,17 @@ const CustomSelect = ({ options, onChange }: CustomSelectProps) => {
 
       <div className={`select-items ${isOpen ? "" : "select-hide"}`}>
         {options.map((option) => (
-          <div>
+          <div key={option.value}>
             <Link
+              onClick={() => {
+                setIsOpen(false);
+
+                setSelectedOption(option);
+
+                onChange?.(option);
+              }}
               href={`/category/${option.slug}`}
-              key={option.value}
-              className={`select-item `}
+              className="select-item"
             >
               {option.label}
             </Link>
